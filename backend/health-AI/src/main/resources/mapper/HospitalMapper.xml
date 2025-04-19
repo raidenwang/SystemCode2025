@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqupt.mapper.HospitalMapper">
+
+    <select id="selectNearbyHospitals" resultType="com.cqupt.domain.dto.HospitalDTO">
+        select id,name,latitude,longitude
+        from hospitals
+        order by SQRT(POW((latitude - #{latitude}), 2) + POW((longitude - #{longitude}), 2))
+        LIMIT 3
+    </select>
+    <select id="getHospitalbyId" resultType="com.cqupt.domain.po.Hospital">
+        select id,name,address,phone,info
+        from hospitalinfo
+        where id=#{id}
+    </select>
+</mapper>

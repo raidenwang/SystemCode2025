@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqupt.mapper.DoctorMapper">
+    <resultMap id="DoctorDTO" type="com.cqupt.domain.dto.DoctorDTO">
+        <id property="id" column="id"/>
+        <id property="name" column="name"/>
+        <id property="title" column="title"/>
+        <id property="info" column="info"/>
+        <id property="imageUrl" column="image_url"/>
+        <id property="departmentId" column="department_id"/>
+        <id property="hospitalId" column="hospital_id"/>
+        <id property="oldName" column="old_name"/>
+        <id property="oldDepartmentId" column="old_department_id"/>
+    </resultMap>
+    <insert id="addDoctor">
+        insert into doctor(name, title, info, image_url, department_id, hospital_id) VALUES (#{name},#{title},#{info},#{imageUrl},#{departmentId},#{hospitalId})
+    </insert>
+    <update id="updateDoctor">
+        update doctor
+        <set>
+            <if test="name!=null and name !=''">name=#{name},</if>
+            <if test="title!=null and title !=''">title=#{title},</if>
+            <if test="info!=null and info !=''">info=#{info},</if>
+        </set>
+        where department_id =#{departmentId} and hospital_id =#{hospitalId} and name=#{oldName}
+    </update>
+    <update id="updateDoctorTWO">
+        update doctor
+        <set>
+            <if test="name!=null and name !=''">name=#{name},</if>
+            <if test="title!=null and title !=''">title=#{title},</if>
+            <if test="info!=null and info !=''">info=#{info},</if>
+            <if test="departmentId!=null and departmentId!=''">department_id = #{departmentId}</if>
+        </set>
+        where department_id =#{oldDepartmentId} and hospital_id =#{hospitalId} and name=#{oldName}
+    </update>
+    <delete id="delDoctor">
+        delete from doctor where name=#{name} and department_id=#{deptId}
+    </delete>
+
+    <select id="getDoctors" resultType="com.cqupt.domain.dto.DoctorDTO">
+        select id,name,title,info,image_url
+        from doctor
+        where
+            hospital_id = #{hospitalId} AND department_id = #{departmentId};
+    </select>
+    <select id="getDoctorAvailability" resultType="com.cqupt.domain.po.DoctorAvailability">
+        select id,day,time
+        from doctor_availability
+        where doctor_id=#{doctorId}
+    </select>
+</mapper>

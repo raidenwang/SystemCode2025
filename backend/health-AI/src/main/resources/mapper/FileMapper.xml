@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqupt.mapper.FileMapper">
+    <delete id="deleteByIds">
+        update file set deleted = true where id in
+        <foreach collection="fileIds" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteByKnowledgeBaseId">
+        update file set deleted = true where knowledge_base_id = #{id}
+    </delete>
+
+    <select id="getByNameAndCreator" resultType="com.cqupt.domain.po.FileEntity">
+        select * from file where name = #{filename} and creator = #{userName}
+    </select>
+
+    <select id="getByCondition" resultType="com.cqupt.domain.po.FileEntity">
+        select * from file where deleted = false
+                             and name = #{name}
+                             and creator = #{userName}
+                             and institution = #{institution}
+                             and date = #{date}
+    </select>
+    <select id="listByKnowledgeBaseId" resultType="com.cqupt.domain.po.FileEntity">
+        select id, name, institution, date, creator, create_time, update_time, file_id, tag
+        from file
+        where deleted = false
+        and knowledge_base_id = #{knowledgeBaseId}
+        order by update_time desc
+    </select>
+    <select id="getByIds" resultType="com.cqupt.domain.po.FileEntity">
+        select * from file
+        where id in
+        <foreach collection="fileIds" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="getInstitutionByFileId" resultType="java.lang.String">
+        select institution from file where file_id = #{fileId}
+    </select>
+
+    <insert id="addBatch">
+        insert into file(knowledge_base_id, name, file_id, institution, creator, date, create_time, update_time, deleted, tag)
+        values
+        <foreach collection="fileEntities" item="fileEntity" separator=",">
+            (#{fileEntity.knowledgeBaseId}, #{fileEntity.name}, #{fileEntity.fileId}, #{fileEntity.institution},
+            #{fileEntity.creator}, #{fileEntity.date}, #{fileEntity.createTime}, #{fileEntity.updateTime}, #{fileEntity.deleted}, #{fileEntity.tag})
+        </foreach>
+    </insert>
+</mapper>

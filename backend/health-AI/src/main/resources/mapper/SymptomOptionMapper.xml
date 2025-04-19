@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqupt.mapper.SymptomOptionMapper">
+    <insert id="insert">
+        insert into chat_llm.symptom_option values (#{id},#{partId},#{optionName},#{symptoms})
+    </insert>
+    <insert id="batchInsert">
+        insert into chat_llm.symptom_option(part_id, option_name, symptom) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.partId}, #{item.optionName}, #{item.symptom})
+        </foreach>
+    </insert>
+    <delete id="deleteByPartId">
+        delete from chat_llm.symptom_option where part_id = #{partId};
+    </delete>
+
+
+    <select id="getId" resultType="java.lang.Integer">
+        select count(*) as total_rows from chat_llm.symptom_option;
+    </select>
+
+    <select id="getGroupedSymptoms" resultType="java.util.Map">
+        select option_name as optionName,group_concat(symptom) as symptoms from chat_llm.symptom_option where part_id=#{partID} group by option_name;
+    </select>
+</mapper>

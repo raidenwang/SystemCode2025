@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqupt.mapper.chat.ChatTableMapper">
+
+    <resultMap type="com.cqupt.domain.chat.ChatTable" id="ChatTableResult">
+        <id     property="id"               column="id"          />
+        <result property="userId"           column="user_id"        />
+        <result property="chatName"         column="chat_name"     />
+        <result property="promptId"         column="prompt_id"     />
+        <result property="createTime"       column="create_time"    />
+        <result property="updateTime"       column="update_time"    />
+    </resultMap>
+
+
+
+    <insert id="saveIntoHistory" useGeneratedKeys="true" keyProperty="id">
+
+        insert into chat_history_records (id_class, chat_id, content, create_time, update_time, chat_source)
+        VALUES
+            (#{idClass},#{chatId},#{content},#{createTime},#{updateTime},#{chatSource})
+    </insert>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        insert into chat_table (user_id, chat_name, create_time, prompt_id)
+        VALUES
+            (#{userId},#{chatName},#{createTime},#{promptId})
+    </insert>
+
+    <update id="update">
+        update chat_table
+        <set>
+            <if test="chatName != null and chatName != ''">chat_name = #{chatName},</if>
+            <if test="promptId != null and promptId != ''">prompt_id = #{promptId},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        where id = #{id}
+    </update>
+    <select id="getChatIdsByUserId" resultMap="ChatTableResult">
+        select *
+        from chat_table
+        where user_id = #{userId} order by create_time DESC
+    </select>
+</mapper>

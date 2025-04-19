@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqupt.mapper.chat.ChatHistoryRecordsMapper">
+
+    <resultMap type="com.cqupt.domain.chat.ChatHistoryRecords" id="ChatHistoryRecordsResult">
+        <id     property="id"           column="id"          />
+        <result property="idClass"      column="id_class"        />
+        <result property="chatId"       column="chat_id"     />
+        <result property="content"      column="content"    />
+        <result property="createTime"   column="create_time"    />
+        <result property="updateTime"   column="update_time"    />
+    </resultMap>
+
+
+    <delete id="deleteByChatId">
+        delete from chat_history_records where chat_id = #{chatId}
+    </delete>
+
+
+    <select id="getByChatId" resultMap="ChatHistoryRecordsResult">
+        select id, id_class, content, chat_id, create_time, update_time, chat_source
+        from chat_history_records where chat_id = #{chatId}
+        order by id ASC
+        <if test="num != null and num != ''">limit #{num}</if>
+    </select>
+</mapper>

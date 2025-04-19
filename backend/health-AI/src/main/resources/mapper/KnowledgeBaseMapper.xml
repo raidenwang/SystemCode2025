@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqupt.mapper.KnowledgeBaseMapper">
+
+    <insert id="add">
+        insert into knowledge_base_new(name, kb_id, creator, type , create_time, update_time, deleted)
+        values (#{name},#{kbId},#{creator},#{type},#{createTime},#{updateTime},#{deleted})
+    </insert>
+    <select id="getByNameAndUserName" resultType="com.cqupt.domain.po.KnowledgeBase">
+        select * from knowledge_base_new where deleted = false and name = #{name} and creator = #{userName}
+    </select>
+    <select id="list" resultType="com.cqupt.domain.po.KnowledgeBase">
+        select id, name, kb_id, creator, type, create_time, update_time
+        from knowledge_base_new
+        where deleted = false and (creator = #{username} or type = 0)
+        order by update_time desc
+    </select>
+    <select id="getById" resultType="com.cqupt.domain.po.KnowledgeBase">
+        select id, name, kb_id, creator, type, create_time, update_time, deleted from knowledge_base_new where deleted = false and id = #{id}
+    </select>
+    <delete id="deleteById">
+        update knowledge_base_new set deleted = true where id = #{id}
+    </delete>
+    <update id="updateById">
+        update knowledge_base_new
+        <set>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

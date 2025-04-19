@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqupt.mapper.DepartmentMapper">
+    <insert id="addDepartment" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO departments (name, category,info)
+        VALUES (#{departmentName}, #{category},#{info})
+    </insert>
+    <update id="updateCategory">
+        update departments set category=#{name}, info=#{info}
+        where category = #{oldName}
+    </update>
+    <update id="updateName">
+        update departments
+        set name = #{name} , info=#{info}
+        where category=#{category} and name=#{oldName};
+    </update>
+    <delete id="deleteDepartment">
+        delete from departments where name = #{name};
+    </delete>
+
+    <select id="getDepartmentsByHospitalId" resultType="com.cqupt.domain.dto.Departments">
+        SELECT d.id, d.name, d.category
+        FROM hospital_departments hd
+                 JOIN hospitals h ON hd.hospital_id = h.id
+                 JOIN departments d ON hd.department_id = d.id
+        WHERE h.id = #{hospitalId};
+    </select>
+    <select id="getDepartmentByHospitalId" resultType="com.cqupt.domain.po.Department">
+        SELECT d.id,d.name,d.category,hd.info
+        from departments d
+                join chat_llm.hospital_departments hd on d.id = hd.department_id
+                join chat_llm.hospitals h on hd.hospital_id = h.id
+        where hd.hospital_id=#{hospitalId} and hd.department_id=#{departmentId}
+    </select>
+    <select id="getAncestors" resultType="string">
+        select ancestors
+        from sys_dept where dept_id = #{parentId}
+    </select>
+    <select id="getcategoryByparentId" resultType="java.lang.String">
+        select dept_name
+        from sys_dept where dept_id = #{parentId}
+    </select>
+    <select id="getDeptName" resultType="java.lang.String">
+        select dept_name
+        from sys_dept where dept_id=#{deptId}
+    </select>
+    <select id="getDeptByName" resultType="com.cqupt.domain.dto.DepartmentDTO">
+        select * from departments where name = #{name}
+    </select>
+    <select id="getDeptIdByName" resultType="java.lang.Integer">
+        select id from departments where name = #{deptName}
+    </select>
+    <select id="getDepartments" resultType="com.cqupt.domain.dto.Departments">
+        select  id,name,category from departments
+    </select>
+    <select id="getDepartmentByDeptId" resultType="com.cqupt.domain.po.Department">
+        select id,name,category,info from departments where id=#{deptId}
+    </select>
+
+</mapper>

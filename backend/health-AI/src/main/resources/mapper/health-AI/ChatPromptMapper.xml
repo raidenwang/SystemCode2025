@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqupt.mapper.chat.ChatPromptMapper">
+    
+    <resultMap type="com.cqupt.domain.chat.ChatPrompt" id="ChatPromptResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="content"    column="content"    />
+        <result property="introduce"    column="introduce"    />
+    </resultMap>
+
+    <sql id="selectChatPromptVo">
+        select id, name, content, introduce from chat_prompt
+    </sql>
+
+    <select id="selectChatPromptList" parameterType="com.cqupt.domain.chat.ChatPrompt" resultMap="ChatPromptResult">
+        <include refid="selectChatPromptVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+        </where>
+    </select>
+    
+    <select id="selectChatPromptById" parameterType="Long" resultMap="ChatPromptResult">
+        <include refid="selectChatPromptVo"/>
+        where id = #{id}
+    </select>
+
+
+    <select id="selectAllPrompt" resultType="com.cqupt.domain.chat.ChatPrompt">
+        select id, name, introduce from chat_prompt
+    </select>
+
+    <select id="getPromptContent" resultType="java.lang.String">
+        select content from chat_prompt
+        where id = #{id}
+    </select>
+
+    <insert id="insertChatPrompt" parameterType="com.cqupt.domain.chat.ChatPrompt" useGeneratedKeys="true" keyProperty="id">
+        insert into chat_prompt
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="content != null">content,</if>
+            <if test="introduce != null">introduce,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="content != null">#{content},</if>
+            <if test="introduce != null">#{introduce},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChatPrompt" parameterType="com.cqupt.domain.chat.ChatPrompt">
+        update chat_prompt
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="introduce != null">introduce = #{introduce},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChatPromptById" parameterType="Long">
+        delete from chat_prompt where id = #{id}
+    </delete>
+
+    <delete id="deleteChatPromptByIds" parameterType="String">
+        delete from chat_prompt where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
